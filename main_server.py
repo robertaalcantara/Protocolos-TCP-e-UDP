@@ -5,4 +5,4 @@ HEADER_SIZE = 54
 
 for tamanho in tamanhos:
     for i in range(10):
-        tempo = TCP_server(tamanho, HEADER_SIZE)
+        TCP_server(tamanho, HEADER_SIZE)
