@@ -1,20 +1,17 @@
-import socket               # Import socket module
-import time
+import socket 
 
-#s = socket.socket()         # Create a socket object
-s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_IP)
-host = "123.123.123.123" # Get local machine name
-port = 54321                 # Reserve a port for your service.
+def TCP_client(tamanho, HEADER_SIZE):
+    s = socket.socket()         # Create a socket object
+    host = "123.123.123.123"    
+    port = 54321                # Reserve a port for your service.
 
-s.connect((host, port))
-s.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
-f = open('arquivo.txt','rb')
-l = f.read(946)
-while (l):
-    s.send(l)
-    #time.sleep(0.1)
-    l = f.read(946)
-f.close()
-print ("Done Sending")
-s.shutdown(socket.SHUT_WR)
-s.close()
+    s.connect((host, port))
+    f = open('arquivo.txt','rb')
+    l = f.read(tamanho-HEADER_SIZE)
+    while (l):
+        s.send(l)
+        l = f.read(tamanho-HEADER_SIZE)
+    f.close()
+    print ("Done Sending")
+    s.shutdown(socket.SHUT_WR)
+    s.close()
