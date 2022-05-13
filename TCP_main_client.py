@@ -4,7 +4,6 @@ import pandas as pd
 
 tamanhos = [100, 500, 1000]
 HEADER_SIZE = 54
-protocolo = 'TCP'
 
 for tamanho in tamanhos:
     tempos = []
@@ -21,9 +20,9 @@ for tamanho in tamanhos:
             'Tamanho': sizes,
             'Tempos': tempos
         })
-    if tamanho==100 and protocolo=='TCP':
-        results.to_csv("Resultados.csv",index=False)
+    if tamanho==100:
+        results.to_csv("ResultadosTCP.csv",index=False)
     else:
-        file_df = pd.read_csv("Resultados.csv")
+        file_df = pd.read_csv("ResultadosTCP.csv")
         file_df = pd.concat([file_df,results], ignore_index=True)
-        file_df.to_csv("Resultados.csv",index=False)
+        file_df.to_csv("ResultadosTCP.csv",index=False)

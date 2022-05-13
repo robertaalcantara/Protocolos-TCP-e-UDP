@@ -8,7 +8,7 @@ def TCP_client(tamanho, HEADER_SIZE):
     port = 55443                # Reserve a port for your service.
 
     t0 = time.time()
-    f = open('arquivo.txt','rb')
+    f = open('pokemon.txt','rb')
     l = f.read(tamanho-HEADER_SIZE)
     s.connect((host, port))
     while (l):
