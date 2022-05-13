@@ -1,23 +1,19 @@
 # Function to find the Checksum of Sent Message
 def findChecksum(SentMessage, k):
 
-	# Dividing sent message in packets of k bits.
 	c1 = SentMessage[0:k]
 	c2 = SentMessage[k:2*k]
 	c3 = SentMessage[2*k:3*k]
 	c4 = SentMessage[3*k:4*k]
 
-	# Calculating the binary sum of packets
 	Sum = bin(int(c1, 2)+int(c2, 2)+int(c3, 2)+int(c4, 2))[2:]
 
-	# Adding the overflow bits
 	if(len(Sum) > k):
 		x = len(Sum)-k
 		Sum = bin(int(Sum[0:x], 2)+int(Sum[x:], 2))[2:]
 	if(len(Sum) < k):
 		Sum = '0'*(k-len(Sum))+Sum
 
-	# Calculating the complement of sum
 	Checksum = ''
 	for i in Sum:
 		if(i == '1'):

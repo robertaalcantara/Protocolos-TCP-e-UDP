@@ -1,9 +1,11 @@
 from TCP_server import TCP_server 
 import time
+import os
 
 tamanhos = [100, 500, 1000]
 HEADER_SIZE = 54
 
+os.nice(-19)
 for tamanho in tamanhos:
     for i in range(10):
         TCP_server(tamanho, HEADER_SIZE, (i==9 and tamanho==1000))
