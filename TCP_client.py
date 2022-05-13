@@ -6,9 +6,9 @@ def TCP_client(tamanho, HEADER_SIZE):
     s = socket.socket()         # Create a socket object
     host = "123.123.123.123"    
     port = 55443                # Reserve a port for your service.
+    f = open('pokemon.txt','rb')
 
     t0 = time.time()
-    f = open('pokemon.txt','rb')
     l = f.read(tamanho-HEADER_SIZE)
     s.connect((host, port))
     while (l):
@@ -17,8 +17,8 @@ def TCP_client(tamanho, HEADER_SIZE):
         l = f.read(tamanho-HEADER_SIZE)
     s.shutdown(socket.SHUT_WR)
     s.close()
-    f.close()
     t1 = time.time()
+    f.close()
 
     return t1-t0
 

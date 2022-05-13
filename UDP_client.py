@@ -1,23 +1,30 @@
 import socket
+import time
 
 #msgFromClient       = "Hello UDP Server"
 #bytesToSend         = str.encode(msgFromClient)
 serverAddressPort   = ("123.123.123.123", 55443)
-f = open('pokemon.txt','rb')
 
-bytesToSend         = str.encode(f)
-l = f.read(tamanho-HEADER_SIZE)
-
-def UDP_client(bufferSize):
+def UDP_client(tamanho, HEADER_SIZE):
     # Create a UDP socket at client side
-    UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+    s = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+    f = open('pokemon.txt','rb')
 
-    # Send to server using created UDP socket
-    UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+    t0 = time.time()
+    l = f.read(tamanho-HEADER_SIZE)
+    while (l):
+        s.sendto(l, serverAddressPort)
+        #time.sleep(sys.float_info.min)
+        l = f.read(tamanho-HEADER_SIZE)
 
-    #msgFromServer = UDPClientSocket.recvfrom(bufferSize)
-    #msg = "Message from Server {}".format(msgFromServer[0])
+    t1 = time.time()
+    f.close()
 
-    #print(msg)
+    return t1-t0
 
-UDP_client(1024)
+def close_UDP():
+    bytesToSend = str.encode("CRm0W>W?;GQ4AP.sSg:hzCB`qKeGxv\<HLWEPGXA=T8KJq`H<krb}Fg:fQq6^E3.")
+    s = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+    s.sendto(bytesToSend, serverAddressPort)
+
+UDP_client(1024, 0)
