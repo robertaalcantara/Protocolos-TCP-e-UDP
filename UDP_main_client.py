@@ -13,12 +13,13 @@ for tamanho in tamanhos:
     for i in range(10):
         #time.sleep(0.5)
         tempo, contador_pacotes = UDP_client(tamanho, HEADER_SIZE)
+        time.sleep(1)
         close_UDP()
         tempos.append(tempo)
         sizes.append(tamanho)
         total_pacotes.append(contador_pacotes)
         print(f"Finished iteration {i} for size {tamanho}")
-        #time.sleep(0.5)
+        time.sleep(2)
 
     results = pd.DataFrame({
             'Tamanho': sizes,
@@ -26,8 +27,10 @@ for tamanho in tamanhos:
             'Pacotes': total_pacotes
         })
     if tamanho==100:
-        results.to_csv("ResultadosUDPSemGarantia.csv",index=False)
+        results.to_csv("ResultadosUDPSemGarantiaPCPETEthernet.csv",index=False)
     else:
-        file_df = pd.read_csv("ResultadosUDPSemGarantia.csv")
+        file_df = pd.read_csv("ResultadosUDPSemGarantiaPCPETEthernet.csv")
         file_df = pd.concat([file_df,results], ignore_index=True)
-        file_df.to_csv("ResultadosUDPSemGarantia.csv",index=False)
+        file_df.to_csv("ResultadosUDPSemGarantiaPCPETEthernet.csv",index=False)
+
+    time.sleep(5)
