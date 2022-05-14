@@ -17,7 +17,6 @@ def TCP_server(tamanho, HEADER_SIZE, extra_sleep):
             f.write(l)
             l = conn.recv(tamanho - HEADER_SIZE)
         if extra_sleep:
-            time.sleep(2)
-        time.sleep(0.1)
+            time.sleep(5)
         f.close()
         conn.close()
