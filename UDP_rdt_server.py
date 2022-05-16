@@ -1,5 +1,4 @@
 import socket
-from tabnanny import check
 
 localIP = "123.123.123.123"
 localPort = 55443
