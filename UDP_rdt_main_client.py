@@ -1,4 +1,4 @@
-from UDP_rdt_client import UDP_rdt_client, close_UDP
+from UDP_rdt_client import UDP_rdt_client, close_UDP_rdt
 import time
 import pandas as pd
 
@@ -14,7 +14,6 @@ for tamanho in tamanhos:
         #time.sleep(0.5)
         tempo, contador_pacotes = UDP_rdt_client(tamanho, HEADER_SIZE)
         time.sleep(1)
-        close_UDP()
         tempos.append(tempo)
         sizes.append(tamanho)
         total_pacotes.append(contador_pacotes)

@@ -27,13 +27,35 @@ def get_checksum(l):
             checksum += '0'
         else:
             checksum += '1'
-    
-    pacote_string = c1+c2+c3+checksum
+
+    pacote_string = c1+c2+c3
     pacote = ''
 
     for i in range(len(pacote_string)//8):
-        pacote += chr(int(pacote_string[i*8:(i+1)*8],2))
-    
+        byte = pacote_string[i*8:(i+1)*8]    
+        pacote += chr(int(byte,2))
+
+    checkson_0 = '0'
+    checkson_1 = '0'
+
+    for i in range(len(checksum)//8):
+        byte = checksum[i*8:(i+1)*8]
+        if byte[0] == '1':      #estouro de representação do checksum
+            if i<(len(checksum)//16):
+                checkson_0 += '1'
+            else:
+                checkson_1 += '1'
+            byte = '0' + byte[1:]
+        else:
+            if i<(len(checksum)//16):
+                checkson_0 += '0'
+            else:
+                checkson_1 += '0'  
+        pacote += chr(int(byte,2))  
+
+    pacote += chr(int(checkson_0,2))
+    pacote += chr(int(checkson_1,2))
+
     return pacote.encode()
 
 def UDP_rdt_client(tamanho, HEADER_SIZE):
@@ -45,12 +67,14 @@ def UDP_rdt_client(tamanho, HEADER_SIZE):
 
     t0 = time.time()
     l = f.read(word_size*3)
-    if(len(l)==42):
+    if(len(l)==word_size*3):
         pacote = get_checksum(l)
     else:
         pacote = l
     
     while (l):
+        #print(pacote)
+        #print(len(pacote))
         s.sendto(pacote, serverAddressPort)
         contador_pacotes+=1
 
@@ -60,7 +84,7 @@ def UDP_rdt_client(tamanho, HEADER_SIZE):
 
         if message_content == 'ACK':
             l = f.read(word_size*3)
-            if(len(l)==42):
+            if(len(l)==word_size*3):
                 pacote = get_checksum(l)
             else:
                 pacote = l
@@ -76,5 +100,3 @@ def close_UDP_rdt():
     bytesToSend = str.encode("CRm0W>W?;GQ4AP.sSg")
     s = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
     s.sendto(bytesToSend, serverAddressPort)
-
-UDP_rdt_client(100,42)
