@@ -25,8 +25,8 @@ def verify_checksum(message):
     checksum = binary_string[word_size_in_bits*3:word_size_in_bits*4]
     checksons = binary_string[word_size_in_bits*4:]
     
-    for i in range(len(checksons[1:])):
-        if i == 8:
+    for i in range(len(checksons)):
+        if i==0 or i == 8:
             continue
         elif checksons[i] == '1':
             if i < 8:
@@ -40,32 +40,31 @@ def verify_checksum(message):
         if char == '0':
             return False, ''
     
-    return True, message[:len(message)*3//4]
+    return True, message[:(len(message)//4)*3]
 
 def UDP_rdt_server(tamanho, HEADER_SIZE):
     s = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
     s.bind((localIP, localPort))
 
-    f = open('arquivo_recebido.txt', 'wb')
+    with open('arquivo_recebido.txt', 'wb') as f:
+        udp_open = True
 
-    udp_open = True
+        while(udp_open):
+            bytesAddressPair = s.recvfrom(tamanho - HEADER_SIZE)
+            message = bytesAddressPair[0]
 
-    while(udp_open):
-        bytesAddressPair = s.recvfrom(tamanho - HEADER_SIZE)
-        message = bytesAddressPair[0]
-
-        if message.decode('utf-8') == 'CRm0W>W?;GQ4AP.sSg':
-            udp_open = False
-        elif len(message.decode('utf-8')) != ((tamanho - HEADER_SIZE)*3)//4:
-            s.sendto(str.encode('ACK'), bytesAddressPair[1])
-            f.write(message)
-        else:
-            is_ack, message_content = verify_checksum(message)
-            if is_ack:
+            if message.decode('utf-8') == 'CRm0W>W?;GQ4AP.sSg':
+                udp_open = False
+            elif len(message.decode('utf-8')) != (tamanho - HEADER_SIZE):
                 s.sendto(str.encode('ACK'), bytesAddressPair[1])
-                f.write(message_content)
+                f.write(message)
             else:
-                print("NACK")
-                s.sendto(str.encode('NACK'), bytesAddressPair[1])
+                is_ack, message_content = verify_checksum(message)
+                if is_ack:
+                    s.sendto(str.encode('ACK'), bytesAddressPair[1])
+                    f.write(message_content)
+                else:
+                    print("NACK")
+                    s.sendto(str.encode('NACK'), bytesAddressPair[1])
 
-    f.close()
+        f.close()
