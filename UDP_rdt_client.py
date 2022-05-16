@@ -56,12 +56,13 @@ def get_checksum(l):
     pacote += chr(int(checkson_0,2))
     pacote += chr(int(checkson_1,2))
 
+    
     return pacote.encode()
 
 def UDP_rdt_client(tamanho, HEADER_SIZE):
     # Create a UDP socket at client side
     s = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-    f = open('pokemon.txt','rb')
+    f = open('arquivo.txt','rb')
     contador_pacotes = 0
     word_size = (tamanho-HEADER_SIZE)//4
 
@@ -73,8 +74,6 @@ def UDP_rdt_client(tamanho, HEADER_SIZE):
         pacote = l
     
     while (l):
-        #print(pacote)
-        #print(len(pacote))
         s.sendto(pacote, serverAddressPort)
         contador_pacotes+=1
 
