@@ -14,6 +14,7 @@ for tamanho in tamanhos:
         #time.sleep(0.5)
         tempo, contador_pacotes = UDP_rdt_client(tamanho, HEADER_SIZE)
         time.sleep(1)
+        close_UDP_rdt()
         tempos.append(tempo)
         sizes.append(tamanho)
         total_pacotes.append(contador_pacotes)
