@@ -45,17 +45,28 @@ def UDP_rdt_client(tamanho, HEADER_SIZE):
 
     t0 = time.time()
     l = f.read(word_size*3)
+    if(len(l)==42):
+        pacote = get_checksum(l)
+    else:
+        pacote = l
     
     while (l):
-        if(len(l)==42):
-            pacote = get_checksum(l)
-        else:
-            pacote = l
-        print(pacote)
         s.sendto(pacote, serverAddressPort)
         contador_pacotes+=1
-        l = f.read(word_size*3)
 
+        ackResponse = s.recvfrom(tamanho - HEADER_SIZE)
+        message = ackResponse[0]
+        message_content = message.decode('utf-8')
+
+        if message_content == 'ACK':
+            l = f.read(word_size*3)
+            if(len(l)==42):
+                pacote = get_checksum(l)
+            else:
+                pacote = l
+        else:
+            continue
+            
     t1 = time.time()
     f.close()
 
