@@ -2,7 +2,7 @@ from UDP_rdt_client import UDP_rdt_client, close_UDP_rdt
 import time
 import pandas as pd
 
-tamanhos = [100, 500, 1000]
+tamanhos = [500, 1000]
 HEADER_SIZE = 42
 
 for tamanho in tamanhos:

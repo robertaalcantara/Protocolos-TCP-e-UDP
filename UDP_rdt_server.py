@@ -1,13 +1,12 @@
 import socket
+import math
 
 localIP = "123.123.123.123"
 localPort = 55443
 
-def verify_checksum(message):
+def verify_checksum(message, word_size):
     binary_string = "".join(f"{ord(i):08b}" for i in message.decode('utf-8'))
-    word_size_in_bits = (len(message)//4)*8
-
-    binary_string = binary_string.zfill(word_size_in_bits*4)
+    word_size_in_bits = (word_size)*8
 
     c1 = binary_string[:word_size_in_bits]
     c2 = binary_string[word_size_in_bits:word_size_in_bits*2]
@@ -23,15 +22,25 @@ def verify_checksum(message):
 
     checksum = binary_string[word_size_in_bits*3:word_size_in_bits*4]
     checksons = binary_string[word_size_in_bits*4:]
+
+    num_checkson_bytes = len(checksons)//8
+    num_extra_bits = len(checksons)-(word_size + num_checkson_bytes)
+    skip = 0
     
     for i in range(len(checksons)):
-        if i==0 or i == 8:
+        if i%8 == 0:
             continue
-        elif checksons[i] == '1':
-            if i < 8:
-                checksum = checksum[:(i-1)*8]+'1'+checksum[((i-1)*8)+1:]
+        elif i> (len(checksons)-8):
+            #last checkson
+            if skip == num_extra_bits:
+                if checksons[i] == '1':
+                    checksum = checksum[:(i-((i//8)+skip+1))*8]+'1'+checksum[((i-((i//8)+skip+1))*8)+1:]
             else:
-                checksum = checksum[:(i-2)*8]+'1'+checksum[((i-2)*8)+1:]
+                skip += 1
+                continue
+
+        elif checksons[i] == '1':
+            checksum = checksum[:(i-((i//8)+1))*8]+'1'+checksum[((i-((i//8)+1))*8)+1:]
 
     final_sum = bin(int(sum,2)+int(checksum,2))[2:]
 
@@ -39,26 +48,32 @@ def verify_checksum(message):
         if char == '0':
             return False, ''
     
-    return True, message[:(len(message)//4)*3]
+    return True, message[:word_size*3]
 
 def UDP_rdt_server(tamanho, HEADER_SIZE):
     s = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
     s.bind((localIP, localPort))
 
+    word_size = (tamanho - HEADER_SIZE)//4
+    while((math.ceil(word_size/7) + word_size*4) > (tamanho-HEADER_SIZE)):
+        word_size -= 1
+    full_size = word_size*4 + (int(math.ceil(word_size/7)))+HEADER_SIZE
+
     with open('arquivo_recebido.txt', 'wb') as f:
         udp_open = True
 
         while(udp_open):
-            bytesAddressPair = s.recvfrom(tamanho - HEADER_SIZE)
+            bytesAddressPair = s.recvfrom(full_size)
             message = bytesAddressPair[0]
 
             if message.decode('utf-8') == 'CRm0W>W?;GQ4AP.sSg':
                 udp_open = False
-            elif len(message.decode('utf-8')) != (tamanho - HEADER_SIZE):
+            elif len(message.decode('utf-8')) != (full_size - HEADER_SIZE):
+                print("entrou ELIF")
                 s.sendto(str.encode('ACK'), bytesAddressPair[1])
                 f.write(message)
             else:
-                is_ack, message_content = verify_checksum(message)
+                is_ack, message_content = verify_checksum(message, word_size)
                 if is_ack:
                     s.sendto(str.encode('ACK'), bytesAddressPair[1])
                     f.write(message_content)
