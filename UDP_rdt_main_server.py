@@ -1,7 +1,6 @@
-from UDP_rdt_server import UDP_rdt_server 
-import time
+from UDP_rdt_server import UDP_rdt_server
 
-tamanhos = [100, 500, 1000]
+tamanhos = [500, 1000]
 HEADER_SIZE = 42
 
 for tamanho in tamanhos:

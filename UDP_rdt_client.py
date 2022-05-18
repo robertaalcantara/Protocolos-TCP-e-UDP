@@ -1,11 +1,13 @@
 import socket
 import time
+import numpy as np
 
 serverAddressPort = ("123.123.123.123", 55443)
 
 def get_checksum(l):
     binary_string = "".join(f"{ord(i):08b}" for i in l.decode('utf-8'))
     word_size_in_bits = (len(l)//3)*8
+    word_size_in_bytes = len(l)//3
 
     binary_string = binary_string.zfill(word_size_in_bits*3)
 
@@ -35,27 +37,37 @@ def get_checksum(l):
         byte = pacote_string[i*8:(i+1)*8]    
         pacote += chr(int(byte,2))
 
-    checkson_0 = '0'
-    checkson_1 = '0'
+    #checkson_0 = '0'
+    #checkson_1 = '0'
+    checksons = []
+    for i in range(int(np.ceil(word_size_in_bytes/7))):
+        checksons.append('0')
+    
+    #print(f"checkson list : {checksons}")
 
     for i in range(len(checksum)//8):
         byte = checksum[i*8:(i+1)*8]
         if byte[0] == '1':      #estouro de representação do checksum
-            if i<(len(checksum)//16):
-                checkson_0 += '1'
-            else:
-                checkson_1 += '1'
+            #if i<(len(checksum)//16):
+            #    checkson_0 += '1'
+            #else:
+            #    checkson_1 += '1'
+            checksons[i//7] += '1'
             byte = '0' + byte[1:]
         else:
-            if i<(len(checksum)//16):
-                checkson_0 += '0'
-            else:
-                checkson_1 += '0'  
+            checksons[i//7] += '0'
+            #if i<(len(checksum)//16):
+            #    checkson_0 += '0'
+            #else:
+            #    checkson_1 += '0'  
         pacote += chr(int(byte,2))  
 
-    pacote += chr(int(checkson_0,2))
-    pacote += chr(int(checkson_1,2))
+    for checkson in checksons:
+        pacote += chr(int(checkson,2))
+    #pacote += chr(int(checkson_0,2))
+    #pacote += chr(int(checkson_1,2))
 
+    #print(f"ultimo checkson {checksons[-1]}")
     
     return pacote.encode()
 
@@ -65,6 +77,11 @@ def UDP_rdt_client(tamanho, HEADER_SIZE):
     f = open('arquivo.txt','rb')
     contador_pacotes = 0
     word_size = (tamanho-HEADER_SIZE)//4
+
+    while((np.ceil(word_size/7) + word_size*4)>(tamanho-HEADER_SIZE)):
+        word_size -= 1
+    
+    #print(f"word_size: {word_size}")
 
     t0 = time.time()
     l = f.read(word_size*3)
