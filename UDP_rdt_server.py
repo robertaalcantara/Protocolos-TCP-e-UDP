@@ -69,7 +69,6 @@ def UDP_rdt_server(tamanho, HEADER_SIZE):
             if message.decode('utf-8') == 'CRm0W>W?;GQ4AP.sSg':
                 udp_open = False
             elif len(message.decode('utf-8')) != (full_size - HEADER_SIZE):
-                print("entrou ELIF")
                 s.sendto(str.encode('ACK'), bytesAddressPair[1])
                 f.write(message)
             else:
