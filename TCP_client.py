@@ -3,9 +3,9 @@ import time
 import sys
 
 def TCP_client(tamanho, HEADER_SIZE):
-    s = socket.socket()         # Create a socket object
+    s = socket.socket()         
     host = "123.123.123.123"    
-    port = 55443                # Reserve a port for your service.
+    port = 55443               
     f = open('arquivo.txt','rb')
     contador_pacotes = 0
 

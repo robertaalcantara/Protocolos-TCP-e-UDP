@@ -11,7 +11,6 @@ for tamanho in tamanhos:
     total_pacotes = []
 
     for i in range(10):
-        #time.sleep(0.5)
         tempo, contador_pacotes = UDP_client(tamanho, HEADER_SIZE)
         time.sleep(1)
         close_UDP()

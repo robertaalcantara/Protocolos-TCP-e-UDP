@@ -37,42 +37,25 @@ def get_checksum(l):
         byte = pacote_string[i*8:(i+1)*8]    
         pacote += chr(int(byte,2))
 
-    #checkson_0 = '0'
-    #checkson_1 = '0'
     checksons = []
     for i in range(int(np.ceil(word_size_in_bytes/7))):
         checksons.append('0')
-    
-    #print(f"checkson list : {checksons}")
 
     for i in range(len(checksum)//8):
         byte = checksum[i*8:(i+1)*8]
         if byte[0] == '1':      #estouro de representação do checksum
-            #if i<(len(checksum)//16):
-            #    checkson_0 += '1'
-            #else:
-            #    checkson_1 += '1'
             checksons[i//7] += '1'
             byte = '0' + byte[1:]
         else:
-            checksons[i//7] += '0'
-            #if i<(len(checksum)//16):
-            #    checkson_0 += '0'
-            #else:
-            #    checkson_1 += '0'  
+            checksons[i//7] += '0'  
         pacote += chr(int(byte,2))  
 
     for checkson in checksons:
         pacote += chr(int(checkson,2))
-    #pacote += chr(int(checkson_0,2))
-    #pacote += chr(int(checkson_1,2))
-
-    #print(f"ultimo checkson {checksons[-1]}")
     
     return pacote.encode()
 
 def UDP_rdt_client(tamanho, HEADER_SIZE):
-    # Create a UDP socket at client side
     s = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
     f = open('arquivo.txt','rb')
     contador_pacotes = 0
@@ -80,8 +63,6 @@ def UDP_rdt_client(tamanho, HEADER_SIZE):
 
     while((np.ceil(word_size/7) + word_size*4)>(tamanho-HEADER_SIZE)):
         word_size -= 1
-    
-    #print(f"word_size: {word_size}")
 
     t0 = time.time()
     l = f.read(word_size*3)

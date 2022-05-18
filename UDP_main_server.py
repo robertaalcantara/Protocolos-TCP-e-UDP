@@ -1,5 +1,4 @@
 from UDP_server import UDP_server 
-import time
 
 tamanhos = [100, 500, 1000]
 HEADER_SIZE = 42

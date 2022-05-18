@@ -4,7 +4,6 @@ import time
 tamanhos = [100, 500, 1000]
 HEADER_SIZE = 66
 
-
 for tamanho in tamanhos:
     for i in range(10):
         TCP_server(tamanho, HEADER_SIZE, (i==9 and tamanho==1000))

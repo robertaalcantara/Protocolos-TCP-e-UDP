@@ -11,7 +11,6 @@ for tamanho in tamanhos:
     total_pacotes = []
 
     for i in range(10):
-        #time.sleep(0.5)
         tempo, contador_pacotes = UDP_rdt_client(tamanho, HEADER_SIZE)
         time.sleep(1)
         close_UDP_rdt()
@@ -26,6 +25,7 @@ for tamanho in tamanhos:
             'Tempos': tempos,
             'Pacotes': total_pacotes
         })
+        
     if tamanho==100:
         results.to_csv("ResultadosUDPComGarantiaPCPETEthernet.csv",index=False)
     else:
